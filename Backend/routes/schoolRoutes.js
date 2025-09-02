@@ -1,0 +1,44 @@
+const express = require('express');
+const router = express.Router();
+const schoolController = require('../controllers/schoolController');
+const multer = require('multer');
+const path = require('path');
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'schoolImages/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// Create schoolImages directory if it doesn't exist
+const fs = require('fs');
+if (!fs.existsSync('schoolImages')) {
+  fs.mkdirSync('schoolImages');
+}
+
+// Routes
+router.post('/add', upload.single('image'), schoolController.addSchool);
+router.get('/all', schoolController.getAllSchools);
+router.get('/:id', schoolController.getSchoolById);
+
+module.exports = router;
