@@ -23,7 +23,9 @@ require("./config/db");
 
 // Routes
 const schoolRoutes = require("./routes/schoolRoutes");
+const authRoutes = require("./routes/authRoutes");
 app.use("/api/schools", schoolRoutes);
+app.use("/api/auth", authRoutes);
 
 // Health check
 app.get("/", (req, res) => {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const schoolController = require('../controllers/schoolController');
+const { authenticateToken, optionalAuth } = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 
@@ -37,8 +38,11 @@ if (!fs.existsSync('schoolImages')) {
 }
 
 // Routes
-router.post('/add', upload.single('image'), schoolController.addSchool);
-router.get('/all', schoolController.getAllSchools);
-router.get('/:id', schoolController.getSchoolById);
+// Protected routes (require authentication)
+router.post('/add', authenticateToken, upload.single('image'), schoolController.addSchool);
+
+// Public routes (anyone can view)
+router.get('/all', optionalAuth, schoolController.getAllSchools);
+router.get('/:id', optionalAuth, schoolController.getSchoolById);
 
 module.exports = router;

@@ -83,7 +83,7 @@ const AddSchool = () => {
       </div>
 
       {/* Form Card */}
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 p-8 hover:shadow-3xl transition-all duration-300">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* School Name */}
           <div>
@@ -94,7 +94,7 @@ const AddSchool = () => {
               type="text"
               id="name"
               {...register('name', { required: 'School name is required' })}
-              className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+              className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 bg-white/50 hover:bg-white hover:border-gray-300"
               placeholder="Enter the complete school name"
             />
             {errors.name && (
@@ -116,7 +116,7 @@ const AddSchool = () => {
               id="address"
               {...register('address', { required: 'Address is required' })}
               rows="3"
-              className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+              className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 resize-none bg-white/50 hover:bg-white hover:border-gray-300"
               placeholder="Enter the complete street address"
             />
             {errors.address && (
@@ -139,7 +139,7 @@ const AddSchool = () => {
                 type="text"
                 id="city"
                 {...register('city', { required: 'City is required' })}
-                className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 bg-white/50 hover:bg-white hover:border-gray-300"
                 placeholder="Enter city name"
               />
               {errors.city && (
@@ -160,7 +160,7 @@ const AddSchool = () => {
                 type="text"
                 id="state"
                 {...register('state', { required: 'State is required' })}
-                className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 bg-white/50 hover:bg-white hover:border-gray-300"
                 placeholder="Enter state name"
               />
               {errors.state && (
@@ -190,7 +190,7 @@ const AddSchool = () => {
                     message: 'Please enter a valid contact number'
                   }
                 })}
-                className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 bg-white/50 hover:bg-white hover:border-gray-300"
                 placeholder="Enter contact number"
               />
               {errors.contact && (
@@ -217,7 +217,7 @@ const AddSchool = () => {
                     message: 'Please enter a valid email address'
                   }
                 })}
-                className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-400 bg-white/50 hover:bg-white hover:border-gray-300"
                 placeholder="Enter email address"
               />
               {errors.email_id && (
@@ -236,7 +236,7 @@ const AddSchool = () => {
             <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-3">
               School Image <span className="text-red-500">*</span>
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-200">
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300 group">
               <input
                 type="file"
                 id="image"
@@ -246,7 +246,7 @@ const AddSchool = () => {
               />
               <label htmlFor="image" className="cursor-pointer">
                 <div className="space-y-4">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                  <svg className="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors duration-300" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <div className="text-gray-600">
@@ -287,7 +287,7 @@ const AddSchool = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:ring-blue-200 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:ring-blue-200 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center space-x-2">
