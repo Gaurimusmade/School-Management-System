@@ -3,10 +3,11 @@ const db = require('../config/db');
 class SchoolService {
   // Add a new school
   async addSchool(schoolData) {
-    return new Promise((resolve, reject) => {
+    try {
       const query = `
         INSERT INTO schools (name, address, city, state, contact, image, email_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *
       `;
       
       const values = [
@@ -19,47 +20,33 @@ class SchoolService {
         schoolData.email_id
       ];
       
-      db.query(query, values, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            id: result.insertId,
-            ...schoolData
-          });
-        }
-      });
-    });
+      const result = await db.query(query, values);
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
   }
 
   // Get all schools
   async getAllSchools() {
-    return new Promise((resolve, reject) => {
+    try {
       const query = 'SELECT * FROM schools ORDER BY created_at DESC';
-      
-      db.query(query, (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+      const result = await db.query(query);
+      return result.rows;
+    } catch (err) {
+      throw err;
+    }
   }
 
   // Get school by ID
   async getSchoolById(id) {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM schools WHERE id = ?';
-      
-      db.query(query, [id], (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results[0] || null);
-        }
-      });
-    });
+    try {
+      const query = 'SELECT * FROM schools WHERE id = $1';
+      const result = await db.query(query, [id]);
+      return result.rows[0] || null;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 

@@ -1,39 +1,46 @@
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 // Database connection
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'school_management',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-};
+let dbConfig;
 
-const pool = mysql.createPool(dbConfig);
+if (process.env.DATABASE_URL) {
+  dbConfig = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
+} else {
+  dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'school_management',
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  };
+}
+
+const pool = new Pool(dbConfig);
 
 class AuthModel {
   // Create OTP record
   async createOTP(email, otp, expiresAt) {
     try {
-      const connection = await pool.getConnection();
-      
       // First, delete any existing OTP for this email
-      await connection.execute(
-        'DELETE FROM otp_verification WHERE email = ?',
+      await pool.query(
+        'DELETE FROM otp_verification WHERE email = $1',
         [email]
       );
       
       // Insert new OTP
-      const [result] = await connection.execute(
-        'INSERT INTO otp_verification (email, otp, expires_at, created_at) VALUES (?, ?, ?, NOW())',
+      const result = await pool.query(
+        'INSERT INTO otp_verification (email, otp, expires_at, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id',
         [email, otp, expiresAt]
       );
       
-      connection.release();
-      return result.insertId;
+      return result.rows[0].id;
     } catch (error) {
       console.error('Error creating OTP:', error);
       throw error;
@@ -43,15 +50,12 @@ class AuthModel {
   // Verify OTP
   async verifyOTP(email, otp) {
     try {
-      const connection = await pool.getConnection();
-      
-      const [rows] = await connection.execute(
-        'SELECT * FROM otp_verification WHERE email = ? AND otp = ? AND expires_at > NOW()',
+      const result = await pool.query(
+        'SELECT * FROM otp_verification WHERE email = $1 AND otp = $2 AND expires_at > NOW()',
         [email, otp]
       );
       
-      connection.release();
-      return rows.length > 0 ? rows[0] : null;
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       console.error('Error verifying OTP:', error);
       throw error;
@@ -61,14 +65,10 @@ class AuthModel {
   // Delete OTP after successful verification
   async deleteOTP(email) {
     try {
-      const connection = await pool.getConnection();
-      
-      await connection.execute(
-        'DELETE FROM otp_verification WHERE email = ?',
+      await pool.query(
+        'DELETE FROM otp_verification WHERE email = $1',
         [email]
       );
-      
-      connection.release();
     } catch (error) {
       console.error('Error deleting OTP:', error);
       throw error;
@@ -78,22 +78,19 @@ class AuthModel {
   // Create user session
   async createUserSession(email, token) {
     try {
-      const connection = await pool.getConnection();
-      
       // Delete any existing session for this email
-      await connection.execute(
-        'DELETE FROM user_sessions WHERE email = ?',
+      await pool.query(
+        'DELETE FROM user_sessions WHERE email = $1',
         [email]
       );
       
       // Insert new session
-      const [result] = await connection.execute(
-        'INSERT INTO user_sessions (email, token, created_at, expires_at) VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 24 HOUR))',
+      const result = await pool.query(
+        'INSERT INTO user_sessions (email, token, created_at, expires_at) VALUES ($1, $2, NOW(), NOW() + INTERVAL \'24 hours\') RETURNING id',
         [email, token]
       );
       
-      connection.release();
-      return result.insertId;
+      return result.rows[0].id;
     } catch (error) {
       console.error('Error creating user session:', error);
       throw error;
@@ -103,15 +100,12 @@ class AuthModel {
   // Verify user session
   async verifyUserSession(token) {
     try {
-      const connection = await pool.getConnection();
-      
-      const [rows] = await connection.execute(
-        'SELECT * FROM user_sessions WHERE token = ? AND expires_at > NOW()',
+      const result = await pool.query(
+        'SELECT * FROM user_sessions WHERE token = $1 AND expires_at > NOW()',
         [token]
       );
       
-      connection.release();
-      return rows.length > 0 ? rows[0] : null;
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       console.error('Error verifying user session:', error);
       throw error;
@@ -121,14 +115,10 @@ class AuthModel {
   // Delete user session (logout)
   async deleteUserSession(token) {
     try {
-      const connection = await pool.getConnection();
-      
-      await connection.execute(
-        'DELETE FROM user_sessions WHERE token = ?',
+      await pool.query(
+        'DELETE FROM user_sessions WHERE token = $1',
         [token]
       );
-      
-      connection.release();
     } catch (error) {
       console.error('Error deleting user session:', error);
       throw error;
@@ -138,19 +128,15 @@ class AuthModel {
   // Clean up expired OTPs and sessions
   async cleanupExpired() {
     try {
-      const connection = await pool.getConnection();
-      
       // Delete expired OTPs
-      await connection.execute(
+      await pool.query(
         'DELETE FROM otp_verification WHERE expires_at < NOW()'
       );
       
       // Delete expired sessions
-      await connection.execute(
+      await pool.query(
         'DELETE FROM user_sessions WHERE expires_at < NOW()'
       );
-      
-      connection.release();
     } catch (error) {
       console.error('Error cleaning up expired records:', error);
       throw error;
