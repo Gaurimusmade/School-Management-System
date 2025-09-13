@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
@@ -10,6 +11,7 @@ const Login = () => {
   const [otpTimer, setOtpTimer] = useState(0);
   
   const { sendOTP, login } = useAuth();
+  const navigate = useNavigate();
   
   const {
     register,
@@ -58,7 +60,10 @@ const Login = () => {
       const result = await login(email, data.otp);
       if (result.success) {
         setMessage('Login successful! Redirecting...');
-        // The AuthContext will handle the redirect
+        // Redirect to show-schools route after successful login
+        setTimeout(() => {
+          navigate('/show-schools');
+        }, 1500);
       } else {
         setMessage(result.message);
       }

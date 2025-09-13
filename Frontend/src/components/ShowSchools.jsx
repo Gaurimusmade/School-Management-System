@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import LoadingSpinner from './LoadingSpinner';
 import EditSchoolModal from './EditSchoolModal';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../config/api';
 
 const ShowSchools = () => {
   const [schools, setSchools] = useState([]);
@@ -22,7 +23,7 @@ const ShowSchools = () => {
   const fetchSchools = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/schools/all');
+      const response = await axios.get(`${API_BASE_URL}/schools/all`);
       if (response.data.success) {
         setSchools(response.data.data);
       }
@@ -36,7 +37,7 @@ const ShowSchools = () => {
 
   const handleDeleteSchool = async (schoolId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/schools/delete/${schoolId}`);
+      const response = await axios.delete(`${API_BASE_URL}/schools/delete/${schoolId}`);
       if (response.data.success) {
         setSchools(schools.filter(school => school.id !== schoolId));
         setShowDeleteModal(false);
@@ -55,7 +56,7 @@ const ShowSchools = () => {
 
   const handleUpdateSchool = async (updatedSchool) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/schools/update/${updatedSchool.id}`, updatedSchool);
+      const response = await axios.put(`${API_BASE_URL}/schools/update/${updatedSchool.id}`, updatedSchool);
       if (response.data.success) {
         setSchools(schools.map(school => 
           school.id === updatedSchool.id ? updatedSchool : school
@@ -156,7 +157,7 @@ const ShowSchools = () => {
             <div className="relative overflow-hidden">
               {school.image ? (
                 <img
-                  src={`http://localhost:5000/schoolImages/${school.image}`}
+                  src={`${IMAGE_BASE_URL}/schoolImages/${school.image}`}
                   alt={school.name}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                   onError={(e) => {

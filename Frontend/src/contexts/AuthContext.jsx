@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
-          const response = await axios.get('http://localhost:5000/api/auth/verify-session');
+          const response = await axios.get(`${API_BASE_URL}/auth/verify-session`);
           if (response.data.success) {
             setUser(response.data.user);
           } else {
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, otp) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/verify-otp', {
+      const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, {
         email,
         otp
       });
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }) => {
 
   const sendOTP = async (email) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/send-otp', {
+      const response = await axios.post(`${API_BASE_URL}/auth/send-otp`, {
         email
       });
 
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       if (token) {
-        await axios.post('http://localhost:5000/api/auth/logout');
+        await axios.post(`${API_BASE_URL}/auth/logout`);
       }
     } catch (error) {
       console.error('Logout error:', error);

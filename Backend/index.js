@@ -5,7 +5,7 @@ const path = require("path");
 
 // Middleware
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));

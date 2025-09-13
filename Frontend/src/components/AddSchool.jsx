@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const AddSchool = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,7 +48,7 @@ const AddSchool = () => {
       formData.append('email_id', data.email_id);
       formData.append('image', selectedImage);
 
-      const response = await axios.post('http://localhost:5000/api/schools/add', formData, {
+      const response = await axios.post(`${API_BASE_URL}/schools/add`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
